@@ -1,0 +1,41 @@
+---
+title: "skills_ps_5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(forcats)
+library(dplyr)
+library(ggplot2)
+
+levels(gss_cat$rincome)
+```
+
+1.1
+
+
+
+```{r}
+ggplot(gss_cat,aes(x=rincome))+
+geom_bar()+
+coord_flip()
+```
+
+The prolem is that the categorial variable is not ordered.  this can be fixed by using fct_infreq():
+
+
+
+
+One way to fix it 
+
+```{r}
+ggplot(gss_cat, aes(x = fct_infreq(rincome))) + 
+  geom_bar() + 
+  coord_flip()
+```
+
+there are also rather many categories.  they can be lumped together: 
