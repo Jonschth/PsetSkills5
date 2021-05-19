@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(forcats)
 library(dplyr)
 library(ggplot2)
+library(naniar)
 
 levels(gss_cat$rincome)
 ```
@@ -101,7 +102,6 @@ relig_summary <- gss_cat %>%
   group_by(relig) %>%
   filter(tvhours<=18) %>% 
   summarise(
-    age = mean(age, na.rm = TRUE),
     tvhours = mean(tvhours, na.rm = TRUE),
     n = n()
   )
@@ -125,3 +125,47 @@ ggplot(relig_summary, aes(tvhours, fct_reorder(relig,tvhours))) + geom_point()
 
 ```
 Dont know what winsorize means
+
+
+1.3.c
+
+
+
+```{r}
+gss_cat$error <- qt(0.975,df=length(gss_cat$tvhours)-1)*sd(gss_cat$tvhours,na.rm=TRUE)/sqrt(length(gss_cat$tvhours))
+
+
+
+
+LOWER95<-mean(gss_cat$tvhours,na.rm=TRUE)-gss_cat$error
+
+HIGHER95<-mean(gss_cat$tvhours, na.rm=TRUE)+gss_cat$error
+
+
+tvhours
+```
+
+
+```{r}
+
+
+
+relig_summary <- gss_cat %>%
+  group_by(relig) %>%
+  summarise(
+    tvhours_mean = mean(tvhours, na.rm = TRUE),
+    error = qt(0.975,df=length(tvhours)-1)*sd(tvhours,na.rm=TRUE)/sqrt(length(tvhours)),
+    LOWER95=mean(tvhours,na.rm=TRUE)-error,
+    HIGHER95 =mean(tvhours, na.rm=TRUE)+error,
+    n = n()
+  )
+
+relig_summary
+
+ggplot(relig_summary)+
+  
+      geom_linerange(mapping=aes(x=relig,ymin=LOWER95,ymax=HIGHER95), colour='black') +
+      geom_point(mapping=aes(x=relig,y=tvhours_mean))+
+      theme(axis.text.x=element_text(angle=-45))
+
+```
