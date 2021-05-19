@@ -20,6 +20,7 @@ levels(gss_cat$rincome)
 
 
 ```{r}
+
 ggplot(gss_cat,aes(x=rincome))+
 geom_bar()+
 coord_flip()
@@ -37,5 +38,13 @@ ggplot(gss_cat, aes(x = fct_infreq(rincome))) +
   geom_bar() + 
   coord_flip()
 ```
+1.2
 
-there are also rather many categories.  they can be lumped together: 
+  
+```{r}
+gss_cat %>%
+  mutate(lump = fct_lump(rincome, n = 5)) %>%
+  ggplot(aes(x=fct_infreq(lump)))+
+  geom_bar()+ 
+  coord_flip()
+```
