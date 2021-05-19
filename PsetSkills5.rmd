@@ -48,3 +48,80 @@ gss_cat %>%
   geom_bar()+ 
   coord_flip()
 ```
+1.3.a
+
+
+
+```{r}
+
+gss_cat
+ggplot(gss_cat, aes(x = (tvhours))) + 
+  geom_bar() + 
+  coord_flip()
+```
+
+
+```{r}
+
+```
+
+
+
+
+```{r}
+ggplot(gss_cat, mapping = aes(x=relig, y=tvhours))+
+    geom_boxplot()+ 
+    theme(axis.text.x=element_text(angle=-45))
+```
+We consider the number outliers that are above 18 hours to be suspect as normal people need to sleep.  it might make sens to remove these.
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+This 
+option 3: winsorize
+
+
+option 1: drop
+The problem is that this removes the data and it is possible that we want to us it later. 
+
+```{r}
+
+relig_summary <- gss_cat %>%
+  group_by(relig) %>%
+  filter(tvhours<=18) %>% 
+  summarise(
+    age = mean(age, na.rm = TRUE),
+    tvhours = mean(tvhours, na.rm = TRUE),
+    n = n()
+  )
+ggplot(relig_summary, aes(tvhours, fct_reorder(relig,tvhours))) + geom_point()
+
+```
+option 2: set missing
+
+```{r}
+install.packages("naniar")
+library(naniar)
+relig_summary <- gss_cat %>%
+  replace_with_na(replace=list(gss_cat$tvhours>=18))%>%
+  group_by(relig) %>%
+  summarise(
+    age = mean(age, na.rm = TRUE),
+    tvhours = mean(tvhours, na.rm = TRUE),
+    n = n()
+  )
+ggplot(relig_summary, aes(tvhours, fct_reorder(relig,tvhours))) + geom_point()
+
+```
+Dont know what winsorize means
