@@ -12,6 +12,7 @@ library(forcats)
 library(dplyr)
 library(ggplot2)
 library(naniar)
+library(lubridate)
 
 levels(gss_cat$rincome)
 ```
@@ -48,6 +49,9 @@ gss_cat %>%
   ggplot(aes(x=fct_infreq(lump)))+
   geom_bar()+ 
   coord_flip()
+
+
+levels(rincome)
 ```
 1.3.a
 
@@ -131,19 +135,6 @@ Dont know what winsorize means
 
 
 
-```{r}
-gss_cat$error <- qt(0.975,df=length(gss_cat$tvhours)-1)*sd(gss_cat$tvhours,na.rm=TRUE)/sqrt(length(gss_cat$tvhours))
-
-
-
-
-LOWER95<-mean(gss_cat$tvhours,na.rm=TRUE)-gss_cat$error
-
-HIGHER95<-mean(gss_cat$tvhours, na.rm=TRUE)+gss_cat$error
-
-
-tvhours
-```
 
 
 ```{r}
@@ -169,3 +160,20 @@ ggplot(relig_summary)+
       theme(axis.text.x=element_text(angle=-45))
 
 ```
+2.
+```{r}
+d1 <- "123-Apr-03"
+d2 <- "06-Jun-2017"
+d3 <- "12/29/14" # Dec 29, 2014
+d4 <- "November 20, 1909"
+d5 <- c("January 2 (2016)", "January 2 (2018)")
+
+
+parse_date_time(d1, "y-m-d")
+parse_date_time(d2, "%d%m%y")
+parse_date_time(d3, "%m%d%y")
+parse_date_time(d4, "%m%d%y")
+
+parse_date_time(d5, "%m%d%y")
+```
+
