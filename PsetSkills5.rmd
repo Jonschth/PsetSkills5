@@ -160,7 +160,7 @@ ggplot(relig_summary)+
       theme(axis.text.x=element_text(angle=-45))
 
 ```
-2.
+2.1
 ```{r}
 d1 <- "123-Apr-03"
 d2 <- "06-Jun-2017"
@@ -169,11 +169,26 @@ d4 <- "November 20, 1909"
 d5 <- c("January 2 (2016)", "January 2 (2018)")
 
 
-parse_date_time(d1, "y-m-d")
+parse_date_time(d1, "%y-m-d") # cannot find a way to work it 
 parse_date_time(d2, "%d%m%y")
 parse_date_time(d3, "%m%d%y")
 parse_date_time(d4, "%m%d%y")
 
 parse_date_time(d5, "%m%d%y")
 ```
+2.2 
+
+Seventh day of every month in 2012
+```{r}
+x <- seq.Date(from=as.Date("2012-01-7"), to=as.Date("2012-12-31"), by="month")
+
+weekdays((x))
+```
+fifth day of every month in 2020:
+
+```{r}
+weekdays(seq.Date(from=as.Date("2012-01-5"), to=as.Date("2012-12-31"), by="month"))
+```
+
+
 
