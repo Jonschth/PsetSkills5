@@ -236,8 +236,7 @@ flights_season  %>%
 ```
   
   2.3.3
-  ggplot(aes(x=arr,color=season)) +
-  geom_freqpoly()
+
   
   
   
@@ -247,7 +246,19 @@ flights_season  %>%
   geom_freqpoly()+
   xlim(-40,150)
 
-  flights
+```
+```{r}
+ 
+
+
+ flights  %>% 
+  mutate(delay_length=case_when(arr_delay<60 ~"short",
+                                  arr_delay>=60 ~"long")) %>% 
+  ggplot(aes(x=arr_delay,color=weekdays(ISOdate(year,month,day)))) +
+  geom_freqpoly()+
+  facet_wrap(~delay_length)
+  
+  xlim(-40,150)
 ```
   
   
