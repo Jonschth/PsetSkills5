@@ -260,5 +260,27 @@ flights_season  %>%
   
   xlim(-40,150)
 ```
+  3.1
+  
+```{r}
+seconds <- as.numeric(Sys.time())
+
+seconds
+
+x = as.POSIXct(seconds,origin = "1970-01-01",tz = "GMT")
+
+x
+
+```
+  
+  3.2
+  
+```{r}
+
+
+library(dslabs)
+
+
+```
   
   
