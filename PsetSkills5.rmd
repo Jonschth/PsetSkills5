@@ -376,18 +376,30 @@ flights_season  %>%
 
 airports
 
-install.packages("maps")
-library(maps)
 
 
-airports %>%
-  semi_join(flights, c("faa" = "dest")) %>%
-  filter()
+
+flights1<-flights %>% 
+  group_by(dest) %>% 
+  summarise(n=mean(arr_delay,na.rm=TRUE)) %>% 
+  ungroup()
+
+flights1<-flights1 %>% 
+  left_join(flights,key="dest")
+
+flights1
+
+
+flights1 %>%
+  left_join(airports, c("dest"= "faa")) %>% 
+  filter(lon>-140) %>% 
   ggplot(aes(lon, lat)) +
     borders("state") +
-    geom_point() +
-    coord_quickmap()
+    geom_point(aes(size=n/10, color=n/10)) +
+    coord_quickmap()+
+    
 
+  View(airports)
 ```
   
   
