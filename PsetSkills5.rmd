@@ -258,7 +258,6 @@ flights_season  %>%
   geom_freqpoly()+
   facet_wrap(~delay_length, scales="free")
   
-  xlim(-40,150)
 ```
   3.1
   
@@ -278,9 +277,39 @@ x
 ```{r}
 
 
-library(dslabs)
-
+nlevels(movielens$genre)
 
 ```
+  There are 901 genres
+  
+```{r}
+levels(movielens$genres)
+
+movielens %>% 
+  filter(str_detect(genres,"Sci-Fi|Horror"))
+
+```
+  there are 20537 movies that are classified as sci-fi or horror
+  
+```{r}
+ movielens  %>% 
+  mutate(movietypes=case_when( str_detect(genres,"Sci-Fi|Horror")~"SFH",
+                              str_detect(genres,"Sci-Fi|Horror")==FALSE ~"Not_SFH")) %>% 
+  group_by(year,movietypes) %>% 
+  summarise(n=n()) %>% 
+  ggplot(mapping=aes(x=year,y=n,color =movietypes))+
+  geom_point()
+  
+  
+```
+
+
+
+
+
+  
+  
+  
+  
   
   
