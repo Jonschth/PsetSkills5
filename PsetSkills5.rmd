@@ -352,7 +352,43 @@ ggplot(movie_ratings2,aes(x=day_of_rating)) +
 
 ```
 
+  4.1
   
+```{r}
+
+
+colnames(flights_season)[14]<-"faa"
+
+flights_season
+
+flights
+
+flights_delay <- flights_season %>% 
+  left_join(airports,by="faa")
+
+flights_delay
+
+
+flights_season  %>% 
+  ggplot(aes(x=dep_time,color=season)) +
+  geom_freqpoly()
+
+
+airports
+
+install.packages("maps")
+library(maps)
+
+
+airports %>%
+  semi_join(flights, c("faa" = "dest")) %>%
+  filter()
+  ggplot(aes(lon, lat)) +
+    borders("state") +
+    geom_point() +
+    coord_quickmap()
+
+```
   
   
   
