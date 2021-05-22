@@ -246,14 +246,15 @@ weekdays(seq.Date(from=as.Date("2012-01-5"), to=as.Date("2012-12-31"), by="month
 flights %>% 
   mutate(dep_diff=dep_time-sched_dep_time-dep_delay) %>% 
   mutate(dep_date=ISOdate(year,month,day)) %>%
-  ggplot(aes(x=dep_date,y=dep_diff)) +
+  ggplot(aes(x=dep_date,y=dep_diff, color = dep_diff)) +
   geom_point()+
   ylim(-100,100)
   
 
 
 ```
-There is often a difference, Why I dont know.  The difference is -40, 40, 80
+There is often a difference, Why I dont know.  The difference is -40, 40, 80. Because it is the same change it is robably related to the ca-hanges to summer time and winter time.  These are there for not delays but simply the moveing og the clock
+
 
 2.3.2
 
