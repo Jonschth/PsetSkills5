@@ -354,6 +354,8 @@ ggplot(movie_ratings2,aes(x=day_of_rating)) +
 
   4.1
   
+  
+This is the code from problem 3 - I dont think it is needed: 
 ```{r}
 
 
@@ -375,9 +377,12 @@ flights_season  %>%
 
 
 airports
+```
 
 
 
+
+```{r}
 # I create flights1 to find the average arrive delay time for each destination
 flights1<-flights %>% 
   group_by(dest) %>% 
