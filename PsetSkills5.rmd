@@ -17,6 +17,7 @@ library(nycflights13)
 library(stringr)
 library(naniar)
 library(DescTools)
+library(tidyr)
 
 
 
@@ -168,7 +169,7 @@ relig_wins2<-relig_wins %>%
   ) 
 
 
-  ggplot(relig_wins2, aes(tvhours_means, x = fct_reorder(relig,tvhours_means))) + 
+  ggplot(relig_wins2, aes(y=tvhours_means, x = fct_reorder(relig,tvhours_means))) + 
   geom_point(color = "red")+
 
 
@@ -298,6 +299,8 @@ flights_season  %>%
   xlim(-40,150)
 
 ```
+
+
 ```{r}
  
 
@@ -321,12 +324,14 @@ x = as.POSIXct(seconds,origin = "1970-01-01",tz = "UTC")
 
 x
 
+
+
 ```
   
   3.2
   
 ```{r}
-
+library(dslabs)
 
 nlevels(movielens$genre)
 
@@ -352,7 +357,6 @@ movielens %>%
   geom_point()
   
 
-
  movielens  %>% 
   mutate(movietypes=case_when( str_detect(genres,"Sci-Fi|Horror")~"SFH",
                               str_detect(genres,"Sci-Fi|Horror")==FALSE ~"Not_SFH")) %>% 
@@ -362,7 +366,6 @@ movielens %>%
                values_from = n) %>% 
    mutate(ratio=SFH/Not_SFH) %>% 
    arrange(desc(ratio))
-   
 
 
 ```
@@ -610,8 +613,6 @@ therefore for the whole dataset we would get approximately
 ```{r}
 # Here I use my work from 4.1 to look at what happened in this one day
 
-flights
-
 flights1<-flights %>% 
   filter(year==2013,month==6,day==13) %>% 
   group_by(dest) %>% 
@@ -625,10 +626,6 @@ flights2<-flights %>%
   left_join(flights1,key="dest")
 
 flights2
-
-# I have introduced a new color pallette for fun:
-install.packages("RColorBrewer")
-library(RColorBrewer)
 
 
 flights2 %>%
