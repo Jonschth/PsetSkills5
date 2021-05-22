@@ -378,31 +378,152 @@ airports
 
 
 
-
+# I create flights1 to find the average arrive delay time for each destination
 flights1<-flights %>% 
   group_by(dest) %>% 
-  summarise(n=mean(arr_delay,na.rm=TRUE)) %>% 
-  ungroup()
-
-flights1<-flights1 %>% 
-  left_join(flights,key="dest")
+  summarise(n=mean(arr_delay,na.rm=TRUE)) 
 
 flights1
 
 
-flights1 %>%
+#I left join all flights with flights in newly created flights1 to get the average arrive delay time for each destination into flights2 
+flights2<-flights %>% 
+  left_join(flights1,key="dest")
+
+flights2
+
+
+flights2 %>%
   left_join(airports, c("dest"= "faa")) %>% 
-  filter(lon>-140) %>% 
+  filter(lon>-140) %>%  # remove Hawaii and Alaska as the longditute is less than 140
   ggplot(aes(lon, lat)) +
     borders("state") +
-    geom_point(aes(size=n/10, color=n/10)) +
-    coord_quickmap()+
+    geom_point(aes(size=n, color=n)) + # Here I use the size of the average delay (n) to control the size of each point and color
+    coord_quickmap()
     
 
   View(airports)
 ```
   
   
+  4.2 
+
+  The lon lat and lon are in the airport database. We must therefore join lon and lat both with the destination and with the origin and destination.
+  I first left joined the destination airports as I did in 4.1, changed the column names to reflect that they were destination.  Then I left joined the origin and changed the the column names.  Then I droppend the excessive columns 
+  
+  
+```{r}
+
+#left join the airports with the flight destination
+flights3 <-flights %>%
+  left_join(airports, c("dest"= "faa")) 
+  
+#see the resulting column names
+colnames(flights3)
+
+#rename columns
+names(flights3)[21] <- "lat_dest"
+names(flights3)[22] <- "lon_dest"
+
+#left join the airports with the flight origination
+flights4<- flights3 %>% 
+    left_join(airports, c("origin"= "faa")) 
+
+#see the resulting column names
+colnames(flights4)
+
+#rename columns
+names(flights4)[28] <- "lat_orig"
+names(flights4)[29] <- "lon_orig"
+
+#drop excessive columns
+flights4 <- flights4[-c(20,23:27,30:33)]
+
+#see the resulting column names
+colnames(flights4)
+
+```
+4.3
+
+here I examin if planes(tailnum) are owned by one airline (carrier).  I start this work by using group and summarise
+
+```{r}
+flights5 <- flights %>% 
+  group_by(tailnum,carrier) %>% 
+  summarise() %>% # here I summarise all the pairs
+  summarise(n=n()) %>% #here I summarise the number of carriers that have owned a particular tail
+  filter(n>1) # her I arrange the tailnames in decreasing order
+  
+flights5
+  
+planes
+```
+There are 17 planes(tailnums) out of 4044 that have been owned by different carriers.  There are seven cases where the carrier name has been obmitted
   
   
   
+4.4
+plane_cohorts <- inner_join(flights,
+  select(planes, tailnum, plane_year = year),
+  by = "tailnum"
+) %>%
+  mutate(age = year - plane_year) %>%
+  filter(!is.na(age)) %>%
+  mutate(age = if_else(age > 25, 25L, age)) %>%
+  group_by(age) %>%
+  summarise(
+    dep_delay_mean = mean(dep_delay, na.rm = TRUE),
+    dep_delay_sd = sd(dep_delay, na.rm = TRUE),
+    arr_delay_mean = mean(arr_delay, na.rm = TRUE),
+    arr_delay_sd = sd(arr_delay, na.rm = TRUE),
+    n_arr_delay = sum(!is.na(arr_delay)),
+    n_dep_delay = sum(!is.na(dep_delay))
+  )
+
+```{r}
+# Here I join the plan database with the plane dataabase, and get the year of build
+flights6 <- inner_join(flights,
+            select(planes, tailnum,build_year = year),
+            by="tailnum") 
+
+flights6
+  
+
+#Here I calculate the mean delays and the sd of delays.  I also calculate the number of no delays
+flights7 <- flights6%>% 
+  mutate(plane_age=year-build_year) %>% 
+  mutate(plane_age=ifelse(plane_age>20,20,plane_age))%>% #grouping all planes older than 20 at 20
+  group_by(plane_age) %>% 
+  summarise(
+        dep_delay_mean = mean(dep_delay, na.rm = TRUE),
+    dep_delay_sd = sd(dep_delay, na.rm = TRUE),
+    arr_delay_mean = mean(arr_delay, na.rm = TRUE),
+    arr_delay_sd = sd(arr_delay, na.rm = TRUE),
+    n_arr_delay = sum(!is.na(arr_delay)),
+    n_dep_delay = sum(!is.na(dep_delay)))
+    
+    
+  flights7
+  
+ggplot(flights7,aes(x=plane_age,y=dep_delay_mean))+
+  geom_point()+
+  scale_x_continuous("Age o plane") +
+  scale_y_continuous("Mean departure delay")+
+  ggtitle("Mean departure delays plotted against the age of planes ")
+
+  
+
+```
+
+For the first 10 years the departure delay seems to increase with older age of planes.  After 10 years the average delay seems to fall again.  Delays of older planes do not seem to be deilayed a lot but they are probably flown a lot less.  I grouped all planes older than 20 at 20
+
+
+4.4
+
+Here I need to 
+
+```{r}
+
+
+```
+
