@@ -587,4 +587,26 @@ flights2 %>%
 
 ```
 
+4.8 
 
+
+ 
+ 
+ 
+```{r}
+anti_join(flights, airports, by = c("dest" = "faa")) 
+
+
+
+
+
+```
+ this command will drop all destinations in flights that have a match in airports.  It will therefore show all the flights that will land in one of the airports in airports.
+ 
+ 
+```{r}
+anti_join(airports, flights, by = c("faa"="dest")) 
+```
+ 
+ this commant will drop all airports that have matcj in flights.  It will therefore show all airports that are not to flown to by any flight in flights. These are mainly small regional airports.
+ 
