@@ -14,6 +14,8 @@ library(ggplot2)
 library(naniar)
 library(lubridate)
 library(nycflights13)
+library(stringr)
+
 
 
 ```
@@ -40,7 +42,7 @@ One way to fix it is to sort the values based on the frquency of each category u
 ```{r}
 
 gss_cat %>% 
-filter(!(str_detect(rincome, "No answer|Not applicable"))) %>%  # I use str_detect to remove "No answer" and "Not applicable"
+filter(!(str_detect(rincome, "No answer|Not applicable|Don't know|Refuse"))) %>%  # I use str_detect to remove "No answer", Don't know Refuse  and "Not applicable"
 ggplot( aes(x = fct_infreq(rincome))) + 
   geom_bar(fill="red") + 
   coord_flip()+ # I use this command to flip the axis
