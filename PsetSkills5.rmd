@@ -16,41 +16,50 @@ library(lubridate)
 library(nycflights13)
 
 
-levels(gss_cat$rincome)
 ```
 
 1.1
 
-
+Here is the plot without any fixing: 
 
 ```{r}
+
+rincome
 
 ggplot(gss_cat,aes(x=rincome))+
-geom_bar()+
-coord_flip()
+geom_bar()
 ```
 
-The prolem is that the categorial variable is not ordered.  this can be fixed by using fct_infreq():
+The prolem is that the categorial variable is not ordered. there are also many categories and this is confusing.  There are also categories that relate to lack of answere. Some of this can be fixed by using fct_infreq():
 
 
 
 
-One way to fix it 
+One way to fix it is to sort the values based on the frquency of each category using the fct_infreq command.  We also remove the "No answer" and "Not Applicable"
 
 ```{r}
-ggplot(gss_cat, aes(x = fct_infreq(rincome))) + 
-  geom_bar() + 
-  coord_flip()
+
+gss_cat %>% 
+filter(!(str_detect(rincome, "No answer|Not applicable"))) %>%  # I use str_detect to remove "No answer" and "Not applicable"
+ggplot( aes(x = fct_infreq(rincome))) + 
+  geom_bar(fill="red") + 
+  coord_flip()+ # I use this command to flip the axis
+  labs(y="Number of observations", x="Wage brackets") +
+  ggtitle("Distribution of wages ")
+
 ```
 1.2
-
+we can also lump more observations (factors) together by using the fct_lum command. To make the plot look nicer we order it again by using the fct_infreq command.  Again we remove the columns we dont want to see such as "Refused", "Other","Not applicable"
   
 ```{r}
 gss_cat %>%
-  mutate(lump = fct_lump(rincome, n = 5)) %>%
+  filter(!(str_detect(rincome, "Refused|Not applicable|Other"))) %>%  # I use str_detect to remove "No answer" and "Not applicable"
+  mutate(lump = fct_lump(rincome, n = 7)) %>%
   ggplot(aes(x=fct_infreq(lump)))+
-  geom_bar()+ 
-  coord_flip()
+  geom_bar(fill="blue")+ 
+  coord_flip()+
+  labs(y="Number of observations", x="Wage brackets") +
+  ggtitle("Distribution of wages ")
 
 
 levels(rincome)
@@ -58,13 +67,15 @@ levels(rincome)
 1.3.a
 
 
-
+This is the distribution of tvhours without any fixing of the graph:
 ```{r}
 
 gss_cat
 ggplot(gss_cat, aes(x = (tvhours))) + 
-  geom_bar() + 
-  coord_flip()
+  geom_bar(fill="green") + 
+  coord_flip()+
+  labs(y="Number of observations", x="Hours of tv watch") +
+  ggtitle("Distribution of tv - hours watched ")
 ```
 
 
@@ -73,10 +84,12 @@ ggplot(gss_cat, aes(x = (tvhours))) +
 ```
 
 
-
+To better understand the outliers I have produced a boxplot the tv hours wathed by eacu religous group
 
 ```{r}
-ggplot(gss_cat, mapping = aes(x=relig, y=tvhours))+
+gss_cat %>% 
+  filter(!(str_detect(relig, "Don't know|No answer"))) %>%  # I use str_detect to remove unwanted columns
+ggplot(mapping = aes(x=relig, y=tvhours))+
     geom_boxplot()+ 
     theme(axis.text.x=element_text(angle=-45))
 ```
@@ -557,7 +570,7 @@ therefore for the whole dataset we would get approximately
 4.7
 
 ```{r}
-# I create flights1 to find the average arrive delay time for each destination
+# Here I use my work from 4.1 to look at what happened in this one day
 
 flights
 
@@ -575,6 +588,10 @@ flights2<-flights %>%
 
 flights2
 
+# I have introduced a new color pallette for fun:
+install.packages("RColorBrewer")
+library(RColorBrewer)
+
 
 flights2 %>%
   left_join(airports, c("dest"= "faa")) %>% 
@@ -583,8 +600,6 @@ flights2 %>%
     borders("state") +
     geom_point(aes(size=n, color=n)) + # Here I use the size of the average delay (n) to control the size of each point and color
     coord_quickmap()
-    
-
 ```
 
 4.8 
