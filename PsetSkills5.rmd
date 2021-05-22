@@ -153,23 +153,25 @@ Option 3:
 Here we use the funvtion winsorize to prepare the tvhours data.  we create a new variable wins_new_tvhours
 ```{r}
 
-install.packages("DescTools")
-library(DescTools)
+
 
 
 relig_wins<-gss_cat %>% 
   mutate(new_wins_tvhours=Winsorize(tvhours,probs=c(0.05,0.95),na.rm=TRUE, type=7))
 
 
-relig_wins %>%
+relig_wins2<-relig_wins %>%
   group_by(relig) %>%
   summarise(
-    tvhours = mean(new_wins_tvhours, na.rm = TRUE),
+    tvhours_means = mean(new_wins_tvhours, na.rm = TRUE),
     n = n()
-  )
+  ) 
 
-ggplot(relig_summary, aes(tvhours, fct_reorder(relig,tvhours))) + 
+
+  ggplot(relig_wins2, aes(tvhours_means, x = fct_reorder(relig,tvhours_means))) + 
   geom_point(color = "red")+
+
+
   labs(x="Hours wathed per religous group", y="Religion") +
   ggtitle("Hours of tv watched grouped by religion ")+
   theme(plot.title=element_text(hjust = 0.5))
