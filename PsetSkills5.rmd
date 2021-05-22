@@ -520,10 +520,38 @@ For the first 10 years the departure delay seems to increase with older age of p
 
 4.4
 
-Here I need to 
+Here I need to carefully join the weather and the flight database.  There is so much data that I must be careful not to start a code that never stops.  I therefore select the first 100 rows of flight using the head function
 
 ```{r}
+start_time <- Sys.time()  # this is to set the starting time
 
+flights8<- 
+  flights %>%
+  head(100) %>%  # limiting the number of rows to 100
+  left_join(weather, by = "year")
+
+end_time <- Sys.time() #this is the final time
+end_time - start_time #this is the difference between starting time and finishing time
+
+nrow(flights8)
+
+nrow(flights)
 
 ```
+Therefore this took 0.5 seconds to run.  The number of rows is 2.6 million
+
+4.6 
+left_join is a socallaed outer join, which means that every flight in the flights database is joined with hourly weather for the whole year (i.e. 24*365 weather reports).  The calculation is there for 100*24*365>1.6 million + inconsistencies, n.a.'s etc which add about 55% more rows on top.
+
+therefore for the whole dataset we would get approximately
+2.6 million times 
+0.5  X 336776/100 =1684 seconds = 27 minutes
+2.6 366776/100 = 9536 million rows 
+
+
+
+4.7
+
+
+
 
