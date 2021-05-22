@@ -407,7 +407,6 @@ flights2 %>%
     coord_quickmap()
     
 
-  View(airports)
 ```
   
   
@@ -557,6 +556,35 @@ therefore for the whole dataset we would get approximately
 
 4.7
 
+```{r}
+# I create flights1 to find the average arrive delay time for each destination
 
+flights
+
+flights1<-flights %>% 
+  filter(year==2013,month==6,day==13) %>% 
+  group_by(dest) %>% 
+  summarise(n=mean(arr_delay,na.rm=TRUE)) 
+
+flights1
+
+
+#I left join all flights with flights in newly created flights1 to get the average arrive delay time for each destination into flights2 
+flights2<-flights %>% 
+  left_join(flights1,key="dest")
+
+flights2
+
+
+flights2 %>%
+  left_join(airports, c("dest"= "faa")) %>% 
+  filter(lon>-140) %>%  # remove Hawaii and Alaska as the longditute is less than 140
+  ggplot(aes(lon, lat)) +
+    borders("state") +
+    geom_point(aes(size=n, color=n)) + # Here I use the size of the average delay (n) to control the size of each point and color
+    coord_quickmap()
+    
+
+```
 
 
